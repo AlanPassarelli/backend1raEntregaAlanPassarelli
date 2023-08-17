@@ -3,49 +3,68 @@ import fs from "fs"
 
 export default class ProductManager{
     constructor(path){
-        this.path=path,
-     this.products=[  
-     ]
+      this.path=path,
+      this.products=[]
     }
-    //READ
-    getProducts=async()=>{
+
+
+    getProducts=async(info)=>{
+
+      const {limit} = info
 
       try {
    
         if(fs.existsSync(this.path)){
           const productlist= await fs.promises.readFile(this.path,"utf-8")
           const productlistparse=JSON.parse(productlist)
-          return productlistparse
+          const productListSliced = productlistparse.slice(0,limit)
+          return productListSliced
         }
         else {
-          throw new Error (error)
+          console.error ("error al listar productos")
+          return
         }
 
       }
 
-      catch(err){
+      catch(error){
         throw new Error (error)
-      }
-
-    
+      }   
     }
+
+    getProductbyId=async(id)=>{
+      const {pid}=id
+      const allproducts=await this.getProducts({})
+      const found=allproducts.find(element=>element.id===parseInt(pid))
+     if (found) {
+      return found
+     } else {
+      console.error ("Producto no encotnrado")
+     }
+    }
+
     //GENERATE ID 
     generateId=async()=>{
-        const counter=this.products.length
+      if (fs.existsSync(this.path)){
+        const listaproducts=await this.getProducts ({})
+        const counter=listaproducts.length
         if(counter==0){
             return 1
         }
         else{
-            return (this.products[counter-1].id)+1
+            return (listaproducts [counter-1].id)+1
         }
+      }
     }
     //CREATE
-    addProduct=async(title,description,price,thumbnail,code,stock)=>{
-      if(!title || !description || !price || !thumbnail|| !code||!stock){
+    addProduct=async(obj)=>{
+      const {title,description,price,thumbnail,category,status=true,code,stock} =obj
+      if(title===undefined || description===undefined  || price===undefined  || category===undefined || status===undefined  || code===undefined ||stock===undefined ){
         console.error("INGRESE TODOS LOS DATOS DEL PRODUCTO")
         return 
       }
       else{
+        const listaproducts = await this.getProducts ({})
         const codigorepetido=this.products.find(elemento=>elemento.code===code)
         if(codigorepetido){
              console.error("EL CODIGO DEL PRODUCTO QUE DESEA AGREGAR ES REPETIDO")
@@ -54,35 +73,37 @@ export default class ProductManager{
         else{
             const id=await this.generateId()
             const productnew={
-                id,title,description,price,thumbnail,code,stock
+                id,title,description,price,thumbnail,category,status,code,stock
             }
-            this.products.push(productnew)
-            await fs.promises.writeFile(this.path,JSON.stringify(this.products,null,2))
+            listaproducts.push(productnew)
+            await fs.promises.writeFile(this.path,JSON.stringify(listaproducts,null,2))
         }
       }
     }
 
 
      //UPDATE
-     updateProduct=async(id,title,description,price,thumbnail,code,stock)=>{
-        if(!id|| !title || !description || !price || !thumbnail|| !code||!stock){
+     updateProduct=async(id,obj)=>{
+      const {pid} = id
+      const {title,description,price,thumbnail,category,status,code,stock}=obj
+        if(title===undefined || description===undefined  || price===undefined  || category===undefined || status===undefined  || code===undefined ||stock===undefined){
           console.error("INGRESE TODOS LOS DATOS DEL PRODUCTO PARA SU ACTUALIZACION")
           return 
         }
         else{
-            const allproducts=await this.getProducts()
+            const allproducts=await this.getProducts({})
             const codigorepetido=allproducts.find(elemento=>elemento.code===code)
             if(codigorepetido){
                  console.error("EL CODIGO DEL PRODUCTO QUE DESEA ACTUALIZAR ES REPETIDO")
                  return
             }
             else{
-                const currentProductsList=await this.getProducts()
+                const currentProductsList=await this.getProducts({})
                 const newProductsList=currentProductsList.map(elemento=>{
-                    if(elemento.id===id){
+                    if(elemento.id===parseInt(pid)){
                       const updatedProduct={
                         ...elemento,
-                        title,description,price,thumbnail,code,stock
+                        title,description,price,thumbnail,code,status,category,stock
                       }
                       return updatedProduct
                     }
@@ -99,16 +120,11 @@ export default class ProductManager{
 
       //DELETE
       deleteProduct=async(id)=>{
-        const allproducts=await this.getProducts()
-        const productswithoutfound=allproducts.filter(elemento=>elemento.id!==id)
+        const {pid}=id
+        const allproducts=await this.getProducts({})
+        const productswithoutfound=allproducts.filter(elemento=>elemento.id!==parseInt(pid))
        await fs.promises.writeFile(this.path,JSON.stringify(productswithoutfound,null,2))
       }
-    getProductbyId=async(id)=>{
-        const allproducts=await this.getProducts()
-       const found=allproducts.find(element=>element.id===id)
-       return found
-    }
-
 
 }
 
