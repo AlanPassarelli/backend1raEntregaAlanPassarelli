@@ -112,5 +112,16 @@
     "status": false,
     "code": "pruebaCoder",
     "stock": 100
+  },
+  {
+    "id": 14,
+    "title": "NEWX",
+    "description": "Update prueba2",
+    "price": 1050,
+    "thumbnail": "url",
+    "category": "muebles",
+    "status": true,
+    "code": "pruebaCodernew",
+    "stock": 100
   }
 ]
