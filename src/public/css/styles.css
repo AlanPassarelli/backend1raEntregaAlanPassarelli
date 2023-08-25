@@ -39,9 +39,9 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: #B6FCFD;
-  -webkit-clip-path: circle(150px at 80% 20%);
-          clip-path: circle(150px at 80% 20%);
+  background: #bcb6fd;
+  -webkit-clip-path: circle(100px at 80% 20%);
+          clip-path: circle(100px at 80% 20%);
   transition: 0.5s ease-in-out;
 }
 .container .card:hover .imgBx {
@@ -49,7 +49,7 @@ body {
   transform: translateY(0);
 }
 .container .card:hover .contentBx {
-  height: 210px;
+  height: 150px;
 }
 .container .card:hover .contentBx .size {
   opacity: 1;
@@ -67,8 +67,8 @@ body {
   transition-delay: 0.75s;
 }
 .container .card:hover::before {
-  -webkit-clip-path: circle(300px at 80% -20%);
-          clip-path: circle(300px at 80% -20%);
+  -webkit-clip-path: circle(400px at 80% -20%);
+          clip-path: circle(400px at 80% -20%);
 }
 .container .card:after {
   content: "Nike";
@@ -167,7 +167,7 @@ body {
 .container .card .contentBx a {
   display: inline-block;
   padding: 10px 30px;
-  background: #B6FCFD;
+  background: #dffdb6;
   border-radius: 4px;
   margin-top: 10px;
   text-decoration: none;
@@ -204,7 +204,7 @@ body {
   padding: 10px;
   border-radius: 4px;
   margin-bottom: 16px;
-  border: 1px solid #1f53c5;
+  border: 1px solid #bcb6fd;
   font-family: 'calibri';
   font-size: 18px;
   color: white;
@@ -235,7 +235,7 @@ body {
 
 #formProduct .botons {
   width: 100%;
-  background: #1f53c5;
+  background: #bcb6fd;
   border: none;
   padding: 12px;
   color: white;

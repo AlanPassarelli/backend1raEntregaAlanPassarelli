@@ -36,8 +36,23 @@ socketServer.on("connection",async(socket)=>{
     console.log("client connected con ID:", socket.id)
 
     const listadeproductos=await pmanagersocket.getProducts({})
+    socketServer.emit("enviodeproducts", listadeproductos)
 
-    socket.emit("products", listadeproductos)
+
+    socket.on ("addProduct",async(obj)=>{
+        await pmanagersocket.addProduct(obj)
+        const listadeproductos=await pmanagersocket.getProducts({})
+        socketServer.emit("enviodeproducts", listadeproductos)
+    })
+
+    socket.on("deleteProduct",async(id)=>{
+        console.log(id)
+        await pmanagersocket.deleteProduct(id)
+        const listadeproductos=await pmanagersocket.getProducts({})
+        socketServer.emit("enviodeproducts",listadeproductos)
+        })
 
 })
+
+
 
