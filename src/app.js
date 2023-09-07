@@ -4,7 +4,7 @@ import productRouter from "./routes/products.router.js"
 import cartRouter from "./routes/cart.router.js"
 import {__dirname} from "./utils.js"
 import handlebars from "express-handlebars"
-
+import "./dao/dbConfig.js"
 import {Server} from "socket.io"
 
 const app=express()
@@ -30,8 +30,15 @@ const httpServer=app.listen(PORT,()=>{
 
 const socketServer= new Server(httpServer)
 
-import ProductManager from "./managers/productManager.js"
-const pmanagersocket=new ProductManager(__dirname+"/files/products.json")
+// import ProductManager from "./dao/managers/productManager.js"
+// const pmanagersocket=new ProductManager(__dirname+"/files/products.json")
+
+import ProductManager from "./dao/mongomanagers/productManagerMongo.js"
+const pmanagersocket=new ProductManager()
+
+import MessagesManager from "./dao/mongomanagers/messageManagerMongo.js";
+const messagesManager = new MessagesManager();
+
 socketServer.on("connection",async(socket)=>{
     console.log("client connected con ID:", socket.id)
 
@@ -52,7 +59,22 @@ socketServer.on("connection",async(socket)=>{
         socketServer.emit("enviodeproducts",listadeproductos)
         })
 
+        
+        socket.on("nuevousuario",(usuario)=>{
+            console.log("usuario" ,usuario)
+            socket.broadcast.emit("broadcast",usuario)
+           })
+           socket.on("disconnect",()=>{
+               console.log(`Usuario con ID : ${socket.id} esta desconectado `)
+           })
+       
+           socket.on("mensaje", async (info) => {
+            // Guardar el mensaje utilizando el MessagesManager
+            console.log(info)
+            await messagesManager.createMessage(info);
+            // Emitir el mensaje a todos los clientes conectados
+            socketServer.emit("chat", await messagesManager.getMessages());
+          });
+    
 })
-
-
 
