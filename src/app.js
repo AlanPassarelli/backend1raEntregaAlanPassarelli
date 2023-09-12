@@ -8,7 +8,7 @@ import "./dao/dbConfig.js"
 import {Server} from "socket.io"
 
 const app=express()
-const PORT =8089
+const PORT =7000
 console.log(__dirname)
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
